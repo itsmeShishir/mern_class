@@ -14,6 +14,9 @@ const app = express();
 dotenv.config();
 app.use(express.json()); // middleware
 app.use(express.urlencoded({ extended: true }));
+//  top link the images
+app.use("/uploads", 
+  express.static(path.join(path.resolve(), "/uploads")));
 
 let allowedOrigins = ["http://localhost:5173"];
 app.use(cors(allowedOrigins));

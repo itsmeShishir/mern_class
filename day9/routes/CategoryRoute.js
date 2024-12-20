@@ -7,6 +7,8 @@ import {
   deleteAllCategories,
 } from "../controller/categoryController.js";
 import express from "express";
+import { checkAdminModels } from "../middleware/authmiddleware.js";
+
 const router = express.Router();
 
 router.get("/", getCategories);

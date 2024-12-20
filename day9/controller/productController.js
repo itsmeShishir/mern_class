@@ -14,7 +14,7 @@ export const searchProductByTitle = async (req, res) => {
   try {
     const products = await Product.find({
       title: { $regex: title, $options: "i" },
-    });
+    }).populate("category", "name");
     if (products.length == 0) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -48,7 +48,7 @@ export const createProduct = async (req, res) => {
 };
 export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().populate("category", "name");
     res.status(200).json(products);
   } catch (e) {
     res.status(400).json({ message: e.message });

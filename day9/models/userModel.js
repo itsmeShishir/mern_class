@@ -20,16 +20,16 @@ const userSchema = new mongoose.Schema(
       required: false,
     },
     role: {
-      type: Boolean,
-      default: false,
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
       required: true,
-    }, // it can b
+    },
   },
   { timestamps: true }
 );
 
-// 
-
+//
 
 const User = mongoose.model("User", userSchema);
 
