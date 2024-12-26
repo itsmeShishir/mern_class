@@ -3,8 +3,20 @@ import axios from "axios";
 import Order from "../models/OrderModel.js";
 import orderItem from "../models/OrderItemModel.js";
 import Product from "../models/productModel.js";
-
+import jwt from "jsonwebtoken";
+import UserToken from "../models/usertokenModel.js";
 export const initializePayment = async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const isTokenExists = await UserToken.findOne({ jwt: token });
+  if (!isTokenExists) {
+    return res.status(401).json({ message: "Access Denied please login" });
+  }
+  const decoded = jwt.verify(token, process.env.JWT);
+  const user = await UserToken.findOne({ user: decoded.id });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  console.log(decoded.id);
   try {
     const {
       items,
@@ -38,14 +50,15 @@ export const initializePayment = async (req, res) => {
         phone,
         zipcode,
         quantity: item.quantity,
-        user: req.user._id,
+        user: decoded.id,
       });
       await orderitem.save();
       orderItems.push(orderitem._id);
     }
     totalAmount *= 100;
+
     const neworder = new Order({
-      user: req.user._id,
+      user: decoded.id,
       paymentStatus: "pending",
       purchase_order_id: `Order-${new Date().getTime()}`,
       payment_token: "",
